@@ -1,9 +1,18 @@
+//  Authors:
+//	Emanuele Del Sozzo, Davide Conficconi
+//	{emanuele.delsozzo, davide.conficconi}@polimi.it
+//
+
 #include "moving_average.hpp"
 
-void moving_average(my_stream_in &in, my_stream_out &out){
+void moving_average(my_stream_in &in, my_stream_out &out, int win, int dim){
 // AXI Stream interfaces for the top function pointer arguments
 #pragma HLS INTERFACE axis register both port=in
 #pragma HLS INTERFACE axis register both port=out
+// AXI lite interfaces to receive window and dim values
+#pragma HLS INTERFACE s_axilite port=win
+#pragma HLS INTERFACE s_axilite port=dim
+
 // The kernel is always active, no start signal required
 #pragma HLS INTERFACE ap_ctrl_none port=return
 
@@ -15,8 +24,8 @@ void moving_average(my_stream_in &in, my_stream_out &out){
 	int avg = 0;
 	int prev = 0;
 // Read input data  and window size
-	int size = in.read().data;
-	int window = in.read().data;
+	int size = dim;
+	int window = win;
 
 
 	for(int i = 0; i < size; i++){
@@ -49,3 +58,5 @@ void moving_average(my_stream_in &in, my_stream_out &out){
 		}
 	}
 }
+
+
